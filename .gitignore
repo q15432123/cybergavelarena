@@ -1,0 +1,11 @@
+node_modules/
+.env
+data/
+*.log
+.workspaces/
+.playwright-mcp/
+.gemini/
+.kimi/
+CLAUDE.md
+KIMI.md
+screenshot-*.png

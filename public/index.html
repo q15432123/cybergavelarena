@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberGavel Arena — $5 for Top-Tier AI Business Validation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- Nav -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="logo">CyberGavel Arena</a>
+      <a href="#how-it-works" class="nav-link">How it works</a>
+    </div>
+  </nav>
+
+  <!-- View 1: Home -->
+  <div id="view-home" class="view active">
+    <section class="hero">
+      <img src="/img/obj-gavel.png" alt="" class="deco deco-hero-left float-anim">
+      <img src="/img/obj-lightbulb.png" alt="" class="deco deco-hero-right float-anim" style="animation-delay:.5s">
+      <p class="hero-eyebrow">Strategic Business Validation</p>
+      <h1 class="hero-title">$5 for consultant-grade<br>business insights</h1>
+      <p class="hero-sub">Three top-tier AI models debate your business proposal in adversarial rounds, then stress-test it across 1,000 Monte Carlo scenarios to produce a quantified survival report. <strong>Consultants charge $5,000+. We charge $5.</strong></p>
+      <div class="input-box">
+        <img src="/img/obj-coffee.png" alt="" class="deco deco-input float-anim" style="animation-delay:1s">
+        <div class="input-box-header">
+          <span class="input-label">Describe your business idea</span>
+        </div>
+        <textarea id="proposal-input" placeholder="e.g. An AI-powered financial analytics SaaS for SMBs that auto-connects accounting systems and generates monthly financial health reports..." rows="4"></textarea>
+        <button id="btn-start" class="btn-primary" onclick="startAnalysis()">Start Free Conversation</button>
+        <p class="input-hint">Conversation is free. Full report unlocked for $5 USDC.</p>
+      </div>
+      <div class="example-tags">
+        <span class="example-label">Try:</span>
+        <span class="tag" onclick="fillExample(this)">SaaS subscription health platform</span>
+        <span class="tag" onclick="fillExample(this)">Cross-border D2C e-commerce</span>
+        <span class="tag" onclick="fillExample(this)">Enterprise AI consulting service</span>
+      </div>
+    </section>
+
+    <section class="trust-strip">
+      <div class="trust-inner">
+        <span class="trust-label">Powered by</span>
+        <div class="trust-logos">
+          <span class="trust-logo">Three Top-Tier AI Models</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="metric-strip-section">
+      <div class="metric-strip">
+        <div class="metric">
+          <span class="metric-number">3</span>
+          <span class="metric-label">Top AI Models<br>Cross-Debate</span>
+        </div>
+        <div class="metric-divider"></div>
+        <div class="metric">
+          <span class="metric-number">15</span>
+          <span class="metric-label">Rounds of<br>Deep Analysis</span>
+        </div>
+        <div class="metric-divider"></div>
+        <div class="metric">
+          <span class="metric-number">1,000</span>
+          <span class="metric-label">Monte Carlo<br>Simulations</span>
+        </div>
+        <div class="metric-divider"></div>
+        <div class="metric">
+          <span class="metric-number">$5</span>
+          <span class="metric-label">Full Report<br>Unlocked</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="how-section">
+      <img src="/img/obj-plant.png" alt="" class="deco deco-how-left float-anim" style="animation-delay:.3s">
+      <img src="/img/obj-paperplane.png" alt="" class="deco deco-how-right float-anim" style="animation-delay:.8s">
+      <p class="section-eyebrow">Our Methodology</p>
+      <h2 class="section-title">Not "asking AI" — systematic business validation</h2>
+      <p class="section-sub">Multi-model adversarial debate + statistical simulation framework. Results you'd never get from a single ChatGPT conversation.</p>
+      <div class="steps">
+        <div class="step-card">
+          <img src="/img/obj-chart.png" alt="" class="step-deco float-anim">
+          <div class="step-num">01</div>
+          <h3>Adversarial Debate</h3>
+          <p>Three top AI models serve as strategy consultant, risk analyst, and independent judge. 3 sessions x 5 rounds — no pleasantries, pure rigor.</p>
+        </div>
+        <div class="step-card">
+          <img src="/img/obj-target.png" alt="" class="step-deco float-anim" style="animation-delay:.4s">
+          <div class="step-num">02</div>
+          <h3>1,000 Scenario Simulations</h3>
+          <p>Extracts 8-12 core assumptions and stress-tests them across boom, bust, black swan, and big-player-entry scenarios via Monte Carlo.</p>
+        </div>
+        <div class="step-card">
+          <img src="/img/obj-book.png" alt="" class="step-deco float-anim" style="animation-delay:.8s">
+          <div class="step-num">03</div>
+          <h3>Quantified Diagnostic Report</h3>
+          <p>Survival score, six-dimension radar chart, ranked fatal risks, competitive moat analysis — decisions driven by data, not gut feeling.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="comparison-section">
+      <img src="/img/obj-coin.png" alt="" class="deco deco-comp-left float-anim" style="animation-delay:.2s">
+      <img src="/img/obj-shield.png" alt="" class="deco deco-comp-right float-anim" style="animation-delay:.7s">
+      <p class="section-eyebrow">Why CyberGavel</p>
+      <h2 class="section-title">Same analysis, 1/1000th the price</h2>
+      <div class="comparison-table">
+        <div class="comparison-row comparison-header">
+          <div class="comparison-cell"></div>
+          <div class="comparison-cell">Ask ChatGPT</div>
+          <div class="comparison-cell">Hire a Consultant</div>
+          <div class="comparison-cell comparison-highlight">CyberGavel Arena</div>
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-cell comparison-label">Depth</div>
+          <div class="comparison-cell">Single model, single view</div>
+          <div class="comparison-cell">Varies by consultant</div>
+          <div class="comparison-cell comparison-highlight">3-model cross-validation</div>
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-cell comparison-label">Stress Test</div>
+          <div class="comparison-cell">None</div>
+          <div class="comparison-cell">Limited scenarios</div>
+          <div class="comparison-cell comparison-highlight">1,000 random simulations</div>
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-cell comparison-label">Delivery</div>
+          <div class="comparison-cell">30 minutes</div>
+          <div class="comparison-cell">2-4 weeks</div>
+          <div class="comparison-cell comparison-highlight">5 minutes</div>
+        </div>
+        <div class="comparison-row">
+          <div class="comparison-cell comparison-label">Cost</div>
+          <div class="comparison-cell">$20/mo subscription</div>
+          <div class="comparison-cell">Starting at $5,000</div>
+          <div class="comparison-cell comparison-highlight">One-time $5</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-section">
+      <img src="/img/obj-rocket.png" alt="" class="deco deco-cta-left float-anim" style="animation-delay:.4s">
+      <img src="/img/obj-magnifier.png" alt="" class="deco deco-cta-right float-anim" style="animation-delay:.9s">
+      <h2 class="cta-title">Your next move<br>shouldn't rely on gut feeling.</h2>
+      <p class="cta-sub">For the price of a coffee, get a business diagnostic report from three AI models working together.</p>
+      <a href="#" class="btn-primary btn-cta" onclick="window.scrollTo({top:0,behavior:'smooth'});document.getElementById('proposal-input').focus();return false;">Validate My Business Idea</a>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <span class="footer-logo">CyberGavel Arena</span>
+        <span class="footer-text">AI-Powered Business Due Diligence</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- View 2: Chat (Phase 0) -->
+  <div id="view-chat" class="view">
+    <div class="chat-container">
+      <div class="chat-header">
+        <h2>Let's dive into your business idea</h2>
+        <button class="btn-secondary" onclick="skipChat()">Skip to analysis</button>
+      </div>
+      <div id="chat-messages" class="chat-messages"></div>
+      <div class="chat-input-area">
+        <div id="chat-tags" class="chat-tags"></div>
+        <div class="chat-input-row">
+          <input type="text" id="chat-input" placeholder="Describe your idea..." onkeydown="if(event.key==='Enter')sendChat()">
+          <button class="btn-primary btn-sm" onclick="sendChat()">Send</button>
+        </div>
+        <div class="token-bar">
+          <div class="token-bar-fill" id="token-bar-fill"></div>
+          <span id="token-count">0 / 5,000 tokens</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Proposal Card (shown after chat) -->
+    <div id="proposal-card" class="proposal-card hidden">
+      <h2>Structured Business Proposal</h2>
+      <div class="card-fields">
+        <div class="card-field">
+          <label>One-liner</label>
+          <input type="text" id="f-oneliner">
+        </div>
+        <div class="card-field">
+          <label>Target Market</label>
+          <input type="text" id="f-market">
+        </div>
+        <div class="card-field">
+          <label>Product / Service</label>
+          <input type="text" id="f-product">
+        </div>
+        <div class="card-field">
+          <label>Business Model</label>
+          <input type="text" id="f-businessmodel">
+        </div>
+        <div class="card-field">
+          <label>Differentiator</label>
+          <input type="text" id="f-diff">
+        </div>
+        <div class="card-field">
+          <label>Resources & Constraints</label>
+          <input type="text" id="f-resources">
+        </div>
+      </div>
+      <div class="card-actions">
+        <button class="btn-secondary" onclick="restartChat()">Start Over</button>
+        <button class="btn-primary" onclick="confirmProposal()">Begin Analysis</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- View 3: Progress -->
+  <div id="view-progress" class="view">
+    <div class="progress-container">
+      <div class="progress-header">
+        <h2>Analysis in Progress</h2>
+        <p id="progress-proposal" class="progress-proposal"></p>
+      </div>
+
+      <!-- Paused warning -->
+      <div id="pause-warning" class="pause-warning hidden">
+        <p id="pause-reason"></p>
+        <button class="btn-primary" onclick="resumeAnalysis()">Resume Analysis</button>
+      </div>
+
+      <!-- Phase 1 -->
+      <div class="phase-card" id="phase1-card">
+        <div class="phase-header">
+          <span class="phase-icon" id="phase1-icon">⏳</span>
+          <h3>Phase 1 — Strategic Debate</h3>
+          <img src="/img/obj-chart.png" alt="" class="phase-illust float-anim">
+        </div>
+        <div class="phase-body">
+          <div class="progress-bar-wrap">
+            <div class="progress-bar" id="phase1-bar" style="width:0%"></div>
+          </div>
+          <p class="phase-detail" id="phase1-detail">Ready...</p>
+        </div>
+      </div>
+
+      <!-- Phase 2 -->
+      <div class="phase-card" id="phase2-card">
+        <div class="phase-header">
+          <span class="phase-icon" id="phase2-icon">⏳</span>
+          <h3>Phase 2 — Scenario Simulation</h3>
+          <img src="/img/obj-target.png" alt="" class="phase-illust float-anim" style="animation-delay: 0.5s">
+        </div>
+        <div class="phase-body">
+          <div class="progress-bar-wrap">
+            <div class="progress-bar" id="phase2-bar" style="width:0%"></div>
+          </div>
+          <div class="stress-counters">
+            <span class="counter pass" id="pass-count">0 PASS</span>
+            <span class="counter fail" id="fail-count">0 FAIL</span>
+          </div>
+          <p class="phase-detail" id="phase2-detail">Waiting for debate to finish...</p>
+        </div>
+      </div>
+
+      <!-- Phase 3 -->
+      <div class="phase-card" id="phase3-card">
+        <div class="phase-header">
+          <span class="phase-icon" id="phase3-icon">⏳</span>
+          <h3>Phase 3 — Report Generation</h3>
+          <img src="/img/obj-book.png" alt="" class="phase-illust float-anim" style="animation-delay: 1s">
+        </div>
+        <div class="phase-body">
+          <p class="phase-detail" id="phase3-detail">Waiting for simulation to finish...</p>
+          <button id="btn-view-report" class="btn-primary hidden" onclick="viewReport()">View Report</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- View 4: Report -->
+  <div id="view-report" class="view">
+    <div class="report-container">
+      <!-- Survival Score -->
+      <div class="score-section">
+        <img src="/img/obj-rocket.png" alt="" class="score-illust float-anim">
+        <div class="score-number" id="score-number">--</div>
+        <p class="score-label">Survival rate across 1,000 randomized market scenarios</p>
+      </div>
+
+      <!-- Radar Chart -->
+      <div class="radar-section">
+        <h2>Six-Dimension Strategy Analysis</h2>
+        <canvas id="radar-canvas" width="400" height="400"></canvas>
+        <div class="radar-labels" id="radar-labels"></div>
+      </div>
+
+      <!-- Paywall -->
+      <div class="paywall-section" id="paywall">
+        <div class="blurred-content" id="blurred-content">
+          <!-- Top Risks -->
+          <div class="risk-section">
+            <h2>Critical Risk Factors</h2>
+            <div id="risk-cards"></div>
+          </div>
+
+          <!-- Moat -->
+          <div class="moat-section">
+            <h2>Competitive Moat</h2>
+            <div id="moat-card"></div>
+          </div>
+
+          <!-- Assumptions Table -->
+          <div class="assumptions-section">
+            <h2>Assumption Pass Rate Breakdown</h2>
+            <div id="assumptions-table"></div>
+          </div>
+
+          <!-- Debate Summary -->
+          <div class="summary-section">
+            <h2>Debate Summary</h2>
+            <div id="debate-summary"></div>
+          </div>
+
+          <!-- PDF -->
+          <div class="pdf-section">
+            <button class="btn-primary" onclick="downloadPDF()">Download Full PDF Report</button>
+          </div>
+        </div>
+
+        <!-- Paywall Overlay -->
+        <div class="paywall-overlay" id="paywall-overlay">
+          <div class="paywall-content">
+            <img src="/img/obj-magnifier.png" alt="" class="paywall-illust float-anim">
+            <h3>Unlock the Full Strategy Report</h3>
+            <p>Includes: fatal risk analysis, competitive moat assessment, full debate transcript, downloadable PDF</p>
+            <p class="paywall-price">$5 USDC</p>
+            <button class="btn-primary btn-lg" onclick="payToUnlock()">Unlock Report Now</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/app.js"></script>
+  <script src="/js/x402-pay.js"></script>
+</body>
+</html>

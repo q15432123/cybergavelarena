@@ -1,0 +1,16 @@
+{
+  "name": "cybergavel-arena",
+  "version": "1.0.0",
+  "description": "AI-powered business proposal stress testing with multi-model debate",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@x402/evm": "^2.6.0",
+    "@x402/express": "^2.6.0",
+    "dotenv": "^16.4.0",
+    "express": "^4.21.0"
+  }
+}

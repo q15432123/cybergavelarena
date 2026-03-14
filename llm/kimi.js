@@ -1,11 +1,11 @@
 const https = require('https');
 
 const API_KEY = process.env.KIMI_API_KEY || '';
-const MODEL = 'moonshot-v1-8k';
+const MODEL = 'k2p5';
 
 async function chat(systemPrompt, userMessage, opts = {}) {
   const maxRetries = opts.retries || 3;
-  const timeout = opts.timeout || 30000;
+  const timeout = opts.timeout || 60000;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -32,12 +32,13 @@ function _call(systemPrompt, userMessage, opts, timeout) {
 
   return new Promise((resolve, reject) => {
     const req = https.request({
-      hostname: 'api.moonshot.cn',
-      path: '/v1/chat/completions',
+      hostname: 'api.kimi.com',
+      path: '/coding/v1/chat/completions',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${API_KEY}`,
+        'User-Agent': 'claude-code/1.0',
       },
     }, (res) => {
       let data = '';

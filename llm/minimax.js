@@ -1,11 +1,11 @@
 const https = require('https');
 
 const API_KEY = process.env.MINIMAX_API_KEY || '';
-const MODEL = 'abab6.5s-chat';
+const MODEL = 'MiniMax-M2.5';
 
 async function chat(systemPrompt, userMessage, opts = {}) {
   const maxRetries = opts.retries || 3;
-  const timeout = opts.timeout || 30000;
+  const timeout = opts.timeout || 60000;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -20,24 +20,23 @@ async function chat(systemPrompt, userMessage, opts = {}) {
 }
 
 function _call(systemPrompt, userMessage, opts, timeout) {
+  // MiniMax Anthropic-compatible API (same format as Claude)
   const body = JSON.stringify({
     model: opts.model || MODEL,
-    messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: userMessage },
-    ],
     max_tokens: opts.max_tokens || 4096,
-    temperature: opts.temperature || 0.7,
+    system: systemPrompt,
+    messages: [{ role: 'user', content: userMessage }],
   });
 
   return new Promise((resolve, reject) => {
     const req = https.request({
-      hostname: 'api.minimax.chat',
-      path: '/v1/text/chatcompletion_v2',
+      hostname: 'api.minimax.io',
+      path: '/anthropic/v1/messages',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${API_KEY}`,
+        'x-api-key': API_KEY,
+        'anthropic-version': '2023-06-01',
       },
     }, (res) => {
       let data = '';
@@ -45,10 +44,8 @@ function _call(systemPrompt, userMessage, opts, timeout) {
       res.on('end', () => {
         try {
           const json = JSON.parse(data);
-          if (json.base_resp?.status_code !== 0 && json.base_resp) {
-            return reject(new Error(`Minimax API: ${json.base_resp.status_msg || 'error'}`));
-          }
-          resolve(json.choices?.[0]?.message?.content || '');
+          if (json.error) return reject(new Error(`Minimax API: ${json.error.message}`));
+          resolve(json.content?.[0]?.text || '');
         } catch (e) { reject(e); }
       });
     });

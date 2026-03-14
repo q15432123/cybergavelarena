@@ -1,11 +1,13 @@
 const https = require('https');
 
 const API_KEY = process.env.ANTHROPIC_API_KEY || '';
+const BASE_HOST = process.env.ANTHROPIC_BASE_URL || 'api.anthropic.com';
+const BASE_PATH = process.env.ANTHROPIC_BASE_PATH || '/v1/messages';
 const MODEL = 'claude-sonnet-4-20250514';
 
 async function chat(systemPrompt, userMessage, opts = {}) {
   const maxRetries = opts.retries || 3;
-  const timeout = opts.timeout || 30000;
+  const timeout = opts.timeout || 60000;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -29,8 +31,8 @@ function _call(systemPrompt, userMessage, opts, timeout) {
 
   return new Promise((resolve, reject) => {
     const req = https.request({
-      hostname: 'api.anthropic.com',
-      path: '/v1/messages',
+      hostname: BASE_HOST,
+      path: BASE_PATH,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

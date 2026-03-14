@@ -507,6 +507,40 @@ body {
   color: var(--navy);
 }
 
+/* Fair Use Notice */
+.notice-section {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 24px 60px;
+}
+
+.notice-box {
+  background: var(--gray-50);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px 32px;
+}
+
+.notice-box h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
+.notice-box p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--gray-500);
+  margin-bottom: 8px;
+}
+
+.notice-box p:last-child {
+  margin-bottom: 0;
+}
+
 /* Footer */
 .footer {
   padding: 40px 48px;

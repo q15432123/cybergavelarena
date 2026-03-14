@@ -129,7 +129,7 @@ async function runStressTest(assumptions, options = {}) {
             const response = await getLLM(modelName).chat(
               'You are a business scenario analyst. Determine whether a given assumption holds true in the specified scenario. Answer only PASS or FAIL with a one-sentence reason.',
               prompt,
-              { max_tokens: 100, timeout: 15000, retries: 2 }
+              { max_tokens: 500, timeout: 30000, retries: 2 }
             );
 
             const { result, reason } = parseResult(response);

@@ -45,7 +45,11 @@ function _call(systemPrompt, userMessage, opts, timeout) {
         try {
           const json = JSON.parse(data);
           if (json.error) return reject(new Error(`Minimax API: ${json.error.message}`));
-          resolve(json.content?.[0]?.text || '');
+          // MiniMax returns [thinking, text] — find the text block
+          const textBlock = json.content?.find(b => b.type === 'text');
+          // Fallback: if only thinking block exists, use thinking content
+          const thinkBlock = json.content?.find(b => b.type === 'thinking');
+          resolve(textBlock?.text || thinkBlock?.thinking || json.content?.[0]?.text || '');
         } catch (e) { reject(e); }
       });
     });

@@ -46,7 +46,10 @@ function _call(systemPrompt, userMessage, opts, timeout) {
         try {
           const json = JSON.parse(data);
           if (json.error) return reject(new Error(`Claude API: ${json.error.message}`));
-          resolve(json.content?.[0]?.text || '');
+          // MiniMax-compatible: content may have [thinking, text] blocks
+          const textBlock = json.content?.find(b => b.type === 'text');
+          const thinkBlock = json.content?.find(b => b.type === 'thinking');
+          resolve(textBlock?.text || thinkBlock?.thinking || json.content?.[0]?.text || '');
         } catch (e) { reject(e); }
       });
     });

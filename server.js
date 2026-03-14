@@ -77,16 +77,16 @@ app.post('/api/chat', async (req, res) => {
 
     // Use last user message
     const userMsg = messages.filter(m => m.role === 'user').pop();
-    const context = messages.map(m => `${m.role === 'user' ? '用戶' : 'AI'}：${m.content}`).join('\n');
+    const context = messages.map(m => `${m.role === 'user' ? 'User' : 'AI'}: ${m.content}`).join('\n');
 
     const response = await claude.chat(
-      `你是一個友善的創業顧問。用戶正在描述一個創業點子，你需要幫他把想法補完。
-每次只問 1-2 個問題，像聊天不像問卷。
-問題方向：賣給誰、怎麼賣、跟別人差在哪、怎麼賺錢、手上有什麼資源。
-每個回覆最後提供 3-4 個快速回答選項，用 [TAG] 格式標記。
-繁體中文回應。`,
+      `You are a friendly startup consultant. The user is describing a business idea, and you need to help them flesh it out.
+Ask only 1-2 questions at a time — keep it conversational, not like a survey.
+Topics to explore: who they're selling to, how they'll sell, what makes them different, how they'll make money, what resources they have.
+At the end of each reply, provide 3-4 quick-answer options in [TAG] format.
+Respond in English.`,
       context,
-      { model: 'claude-haiku-4-5-20251001', max_tokens: 500 }
+      { max_tokens: 500 }
     );
 
     // Parse tags from response
@@ -119,11 +119,11 @@ app.post('/api/chat/summarize', async (req, res) => {
     const { getLLM } = require('./llm');
     const claude = getLLM('claude');
 
-    const context = messages.map(m => `${m.role === 'user' ? '用戶' : 'AI'}：${m.content}`).join('\n');
+    const context = messages.map(m => `${m.role === 'user' ? 'User' : 'AI'}: ${m.content}`).join('\n');
 
     const response = await claude.chat(
-      '你是一個商業分析專家。把對話內容總結成結構化提案。',
-      `以下是用戶和 AI 的對話：\n\n${context}\n\n請總結成結構化提案，用以下 JSON 格式回覆：\n{"oneLiner": "一句話描述", "market": "目標市場與客群", "product": "產品/服務內容", "businessModel": "商業模式與定價", "differentiation": "差異化優勢", "resources": "已知資源與限制"}\n\n只回覆 JSON。`,
+      'You are a business analysis expert. Summarize the conversation into a structured proposal.',
+      `Here is the conversation between the user and AI:\n\n${context}\n\nPlease summarize into a structured proposal using the following JSON format:\n{"oneLiner": "One-sentence description", "market": "Target market and audience", "product": "Product/service description", "businessModel": "Business model and pricing", "differentiation": "Competitive differentiator", "resources": "Known resources and constraints"}\n\nRespond with JSON only.`,
       { max_tokens: 800 }
     );
 
@@ -151,7 +151,7 @@ app.post('/api/analyze', (req, res) => {
 
   const ip = req.ip || req.connection.remoteAddress;
   if (!checkRateLimit(ip)) {
-    return res.status(429).json({ error: '每小時最多 5 次分析' });
+    return res.status(429).json({ error: 'Rate limit: max 5 analyses per hour' });
   }
 
   const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -192,22 +192,22 @@ async function runAnalysis(analysis) {
       onProgress: (event) => {
         if (event.type === 'round') {
           analysis.phase1Progress.current++;
-          analysis.phase1Progress.lastMessage = `${event.role === 'pro' ? '正方' : event.role === 'con' ? '反方' : '判官'} (${event.model}) 第 ${event.round} 回合`;
+          analysis.phase1Progress.lastMessage = `${event.role === 'pro' ? 'PRO' : event.role === 'con' ? 'CON' : 'JUDGE'} (${event.model}) Round ${event.round}`;
         }
       },
     });
   } catch (err) {
     console.error(`[${id}] Phase 1 failed:`, err.message);
     analysis.status = 'paused';
-    analysis.pauseReason = `辯論失敗：${err.message}`;
-    analysis.checkpoint = 'Phase 1 辯論中斷';
+    analysis.pauseReason = `Debate failed: ${err.message}`;
+    analysis.checkpoint = 'Phase 1 debate interrupted';
     saveCheckpoint(analysis);
     return;
   }
 
   if (!analysis.debateResult.assumptions.length) {
     analysis.status = 'error';
-    analysis.pauseReason = '無法從辯論中提取假設';
+    analysis.pauseReason = 'Failed to extract assumptions from debate';
     return;
   }
 
@@ -231,8 +231,8 @@ async function runAnalysis(analysis) {
   } catch (err) {
     console.error(`[${id}] Phase 2 failed:`, err.message);
     analysis.status = 'paused';
-    analysis.pauseReason = `壓力測試失敗：${err.message}`;
-    analysis.checkpoint = `Phase 2 壓力測試第 ${analysis.phase2Progress.current} 次`;
+    analysis.pauseReason = `Stress test failed: ${err.message}`;
+    analysis.checkpoint = `Phase 2 stress test at iteration ${analysis.phase2Progress.current}`;
     saveCheckpoint(analysis);
     return;
   }
@@ -255,8 +255,8 @@ async function runAnalysis(analysis) {
   } catch (err) {
     console.error(`[${id}] Phase 3 failed:`, err.message);
     analysis.status = 'paused';
-    analysis.pauseReason = `報告生成失敗：${err.message}`;
-    analysis.checkpoint = 'Phase 3 報告生成中斷';
+    analysis.pauseReason = `Report generation failed: ${err.message}`;
+    analysis.checkpoint = 'Phase 3 report generation interrupted';
     saveCheckpoint(analysis);
   }
 }

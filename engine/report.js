@@ -2,12 +2,12 @@ const { getLLM } = require('../llm');
 
 const DIMENSIONS = ['market', 'tech', 'finance', 'legal', 'competition', 'team'];
 const DIM_LABELS = {
-  market: '市場需求',
-  tech: '技術可行性',
-  finance: '財務模型',
-  legal: '法規風險',
-  competition: '競爭壁壘',
-  team: '團隊執行力',
+  market: 'Market Demand',
+  tech: 'Tech Feasibility',
+  finance: 'Financial Model',
+  legal: 'Regulatory Risk',
+  competition: 'Competitive Moat',
+  team: 'Team Execution',
 };
 
 // Use Claude to classify assumptions into 6 dimensions
@@ -16,8 +16,8 @@ async function classifyAssumptions(assumptions) {
   const list = assumptions.map((a, i) => `${i + 1}. ${a}`).join('\n');
 
   const response = await claude.chat(
-    '你是一個商業分析專家。',
-    `把以下假設分類到六個維度：market（市場需求）、tech（技術可行性）、finance（財務模型）、legal（法規風險）、competition（競爭壁壘）、team（團隊執行力）。\n\n${list}\n\n用 JSON 格式回覆，key 是假設的序號（從 1 開始），value 是維度名稱。例如：\n{"1": "market", "2": "tech", "3": "finance"}\n\n只回覆 JSON，不要其他文字。`,
+    'You are a business analysis expert.',
+    `Classify the following assumptions into six dimensions: market (Market Demand), tech (Tech Feasibility), finance (Financial Model), legal (Regulatory Risk), competition (Competitive Moat), team (Team Execution).\n\n${list}\n\nRespond in JSON format where keys are assumption numbers (starting from 1) and values are dimension names. Example:\n{"1": "market", "2": "tech", "3": "finance"}\n\nRespond with JSON only, no other text.`,
     { max_tokens: 500 }
   );
 
@@ -46,7 +46,7 @@ async function classifyAssumptions(assumptions) {
   return mapping;
 }
 
-// Generate debate summary using Claude
+// Generate debate summary
 async function generateDebateSummary(debates) {
   const claude = getLLM('claude');
 
@@ -56,13 +56,13 @@ async function generateDebateSummary(debates) {
       const roundTexts = d.rounds.map(r =>
         `[${r.role.toUpperCase()} - ${r.model}] ${r.content.slice(0, 300)}...`
       ).join('\n');
-      return `【第 ${i + 1} 場辯論】\n${roundTexts}`;
+      return `[Session ${i + 1} Debate]\n${roundTexts}`;
     })
     .join('\n\n');
 
   const response = await claude.chat(
-    '你是一個會議記錄摘要專家。',
-    `以下是三場辯論的記錄：\n\n${debateTexts}\n\n請用 3-5 個要點總結辯論的關鍵結論和轉折點。每個要點一句話。\n\n用 JSON 格式回覆：\n{"summary": ["要點1", "要點2", ...]}\n\n只回覆 JSON。`,
+    'You are an expert at summarizing meeting notes and debates.',
+    `Here are the transcripts of three debate sessions:\n\n${debateTexts}\n\nPlease summarize the key conclusions and turning points in 3-5 bullet points. One sentence per bullet point.\n\nRespond in JSON format:\n{"summary": ["Point 1", "Point 2", ...]}\n\nRespond with JSON only.`,
     { max_tokens: 500 }
   );
 
@@ -75,7 +75,7 @@ async function generateDebateSummary(debates) {
     console.error('[report] Failed to parse debate summary:', e.message);
   }
 
-  return ['辯論摘要生成失敗'];
+  return ['Debate summary generation failed'];
 }
 
 // Main report generation
@@ -116,7 +116,7 @@ async function generateReport(debateResult, stressTestResult, proposal, startTim
       const avg = dimAssumptions.reduce((sum, a) => sum + a.passRate, 0) / dimAssumptions.length;
       radar[dim] = Math.round(avg * 100);
     } else {
-      radar[dim] = 50; // default if no assumptions in this dimension
+      radar[dim] = 50;
     }
   }
 
@@ -130,8 +130,8 @@ async function generateReport(debateResult, stressTestResult, proposal, startTim
   const topRisks = sorted.slice(0, 3).map(a => ({
     assumption: a.text,
     passRate: a.passRate,
-    topFailReason: a.topFailReasons[0] || '未知',
-    suggestion: `建議針對「${a.text.slice(0, 20)}...」進行更深入的市場驗證`,
+    topFailReason: a.topFailReasons[0] || 'Unknown',
+    suggestion: `Recommend deeper market validation for "${a.text.slice(0, 40)}..."`,
   }));
 
   // 6. Strongest moat (highest passRate)
@@ -139,7 +139,7 @@ async function generateReport(debateResult, stressTestResult, proposal, startTim
   const moat = moatAssumption ? {
     assumption: moatAssumption.text,
     passRate: moatAssumption.passRate,
-    analysis: `此假設在 ${Math.round(moatAssumption.passRate * 100)}% 的情境中成立，顯示出較強的韌性`,
+    analysis: `This assumption held true in ${Math.round(moatAssumption.passRate * 100)}% of scenarios, demonstrating strong resilience`,
   } : null;
 
   // 7. Debate summary
@@ -148,7 +148,7 @@ async function generateReport(debateResult, stressTestResult, proposal, startTim
     debateSummary = await generateDebateSummary(debateResult.debates);
   } catch (e) {
     console.error('[report] Debate summary failed:', e.message);
-    debateSummary = ['辯論摘要生成失敗'];
+    debateSummary = ['Debate summary generation failed'];
   }
 
   const duration = startTime ? Math.round((Date.now() - startTime) / 1000) : 0;

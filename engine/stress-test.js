@@ -2,11 +2,11 @@ const { getLLM, randomLLM } = require('../llm');
 
 // Scenario matrix per V2 spec
 const SCENARIO_MATRIX = {
-  market: ['繁榮', '穩定', '衰退', '泡沫', '黑天鵝'],
-  competition: ['無競爭', '少量競爭', '激烈競爭', '巨頭進場'],
-  regulation: ['鼓勵', '中立', '觀望', '嚴格管制'],
-  economy: ['擴張期', '頂峰', '收縮期', '谷底'],
-  funding: ['資金充裕', '正常', '緊縮', '融資寒冬'],
+  market: ['Booming', 'Stable', 'Declining', 'Bubble', 'Black Swan'],
+  competition: ['No Competition', 'Light Competition', 'Fierce Competition', 'Big Player Entry'],
+  regulation: ['Supportive', 'Neutral', 'Cautious', 'Strict Regulation'],
+  economy: ['Expansion', 'Peak', 'Contraction', 'Trough'],
+  funding: ['Capital Abundant', 'Normal', 'Tightening', 'Funding Winter'],
 };
 
 function randomPick(arr) {
@@ -61,10 +61,10 @@ function parseResult(response) {
 
   if (upper.startsWith('PASS')) {
     result = 'PASS';
-    reason = text.replace(/^PASS\s*[|:：]\s*/i, '').trim();
+    reason = text.replace(/^PASS\s*[|:]\s*/i, '').trim();
   } else if (upper.startsWith('FAIL')) {
     result = 'FAIL';
-    reason = text.replace(/^FAIL\s*[|:：]\s*/i, '').trim();
+    reason = text.replace(/^FAIL\s*[|:]\s*/i, '').trim();
   } else if (upper.includes('PASS')) {
     result = 'PASS';
     reason = text;
@@ -81,7 +81,7 @@ function aggregateReasons(reasons) {
   const groups = new Map();
 
   for (const r of reasons) {
-    const key = r.slice(0, 15); // rough grouping by prefix
+    const key = r.slice(0, 15);
     if (groups.has(key)) {
       groups.get(key).count++;
     } else {
@@ -106,7 +106,7 @@ async function runStressTest(assumptions, options = {}) {
   let totalPasses = 0;
   let totalFails = 0;
 
-  console.log(`[stress-test] Starting: ${assumptions.length} assumptions × ${testsPerAssumption} tests = ${total} total`);
+  console.log(`[stress-test] Starting: ${assumptions.length} assumptions x ${testsPerAssumption} tests = ${total} total`);
   onProgress({ type: 'phase2_start', total });
 
   const results = [];
@@ -116,7 +116,6 @@ async function runStressTest(assumptions, options = {}) {
     const passReasons = [];
     const failReasons = [];
 
-    // Create all test promises for this assumption
     const testPromises = [];
     for (let i = 0; i < testsPerAssumption; i++) {
       testPromises.push(
@@ -124,11 +123,11 @@ async function runStressTest(assumptions, options = {}) {
           const scenario = generateScenario();
           const modelName = randomLLM();
 
-          const prompt = `判斷以下創業假設在此情境下是否成立。\n假設：${assumption}\n情境：市場=${scenario.market}, 競爭=${scenario.competition}, 法規=${scenario.regulation}, 經濟=${scenario.economy}, 資金=${scenario.funding}\n只回答 PASS 或 FAIL，然後用一句話說明原因。\n格式：PASS|原因 或 FAIL|原因`;
+          const prompt = `Determine whether the following business assumption holds true in this scenario.\nAssumption: ${assumption}\nScenario: Market=${scenario.market}, Competition=${scenario.competition}, Regulation=${scenario.regulation}, Economy=${scenario.economy}, Funding=${scenario.funding}\nAnswer only PASS or FAIL, followed by a one-sentence explanation.\nFormat: PASS|reason or FAIL|reason`;
 
           try {
             const response = await getLLM(modelName).chat(
-              '你是一個商業情境分析師。根據給定情境判斷假設是否成立。只回答 PASS 或 FAIL 加一句原因。',
+              'You are a business scenario analyst. Determine whether a given assumption holds true in the specified scenario. Answer only PASS or FAIL with a one-sentence reason.',
               prompt,
               { max_tokens: 100, timeout: 15000, retries: 2 }
             );
@@ -180,7 +179,7 @@ async function runStressTest(assumptions, options = {}) {
       passReasons: aggregateReasons(passReasons),
     });
 
-    console.log(`[stress-test] "${assumption.slice(0, 30)}..." → ${pass}/${validTotal} pass (${Math.round((pass / Math.max(validTotal, 1)) * 100)}%)`);
+    console.log(`[stress-test] "${assumption.slice(0, 30)}..." -> ${pass}/${validTotal} pass (${Math.round((pass / Math.max(validTotal, 1)) * 100)}%)`);
   }
 
   onProgress({ type: 'phase2_done', results });

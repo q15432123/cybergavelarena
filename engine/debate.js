@@ -20,11 +20,6 @@ const SEAT_ARRANGEMENTS = [
 ];
 
 // Run a single debate session (5 rounds per V2 spec)
-// R1: pro gets proposal, proposes
-// R2: con gets pro's argument, challenges
-// R3: pro gets con's challenge, responds
-// R4: con gets pro's response, attacks further
-// R5: judge gets all transcript, verdicts
 async function runSession(sessionIndex, proposal, onProgress) {
   const seats = SEAT_ARRANGEMENTS[sessionIndex];
   const proPrompt = loadPrompt('pro');
@@ -43,7 +38,7 @@ async function runSession(sessionIndex, proposal, onProgress) {
     notify({ type: 'round', session: sessionIndex + 1, round: 1, role: 'pro', model: seats.pro });
     const r1 = await getLLM(seats.pro).chat(
       proPrompt,
-      `以下是一個創業提案，請為它辯護並提出優化方案：\n\n${proposal}`
+      `Here is a business proposal. Please defend it and suggest improvements:\n\n${proposal}`
     );
     rounds.push({ round: 1, role: 'pro', model: seats.pro, content: r1 });
 
@@ -51,7 +46,7 @@ async function runSession(sessionIndex, proposal, onProgress) {
     notify({ type: 'round', session: sessionIndex + 1, round: 2, role: 'con', model: seats.con });
     const r2 = await getLLM(seats.con).chat(
       conPrompt,
-      `以下是一個創業提案和正方的論述：\n\n【提案】\n${proposal}\n\n【正方論述】\n${r1}\n\n請提出你的質疑和反駁。`
+      `Here is a business proposal and the PRO side's argument:\n\n[PROPOSAL]\n${proposal}\n\n[PRO ARGUMENT]\n${r1}\n\nPlease present your challenges and rebuttals.`
     );
     rounds.push({ round: 2, role: 'con', model: seats.con, content: r2 });
 
@@ -59,7 +54,7 @@ async function runSession(sessionIndex, proposal, onProgress) {
     notify({ type: 'round', session: sessionIndex + 1, round: 3, role: 'pro', model: seats.pro });
     const r3 = await getLLM(seats.pro).chat(
       proPrompt,
-      `以下是辯論進展：\n\n【提案】\n${proposal}\n\n【你的第一輪論述】\n${r1}\n\n【反方質疑】\n${r2}\n\n請回應反方的質疑並強化你的論點。`
+      `Here is the debate progress:\n\n[PROPOSAL]\n${proposal}\n\n[YOUR ROUND 1 ARGUMENT]\n${r1}\n\n[CON CHALLENGE]\n${r2}\n\nPlease respond to the CON side's challenges and strengthen your argument.`
     );
     rounds.push({ round: 3, role: 'pro', model: seats.pro, content: r3 });
 
@@ -67,7 +62,7 @@ async function runSession(sessionIndex, proposal, onProgress) {
     notify({ type: 'round', session: sessionIndex + 1, round: 4, role: 'con', model: seats.con });
     const r4 = await getLLM(seats.con).chat(
       conPrompt,
-      `以下是辯論進展：\n\n【提案】\n${proposal}\n\n【正方第一輪】\n${r1}\n\n【你的第一輪質疑】\n${r2}\n\n【正方回應】\n${r3}\n\n請進一步攻擊正方的弱點。`
+      `Here is the debate progress:\n\n[PROPOSAL]\n${proposal}\n\n[PRO ROUND 1]\n${r1}\n\n[YOUR ROUND 1 CHALLENGE]\n${r2}\n\n[PRO RESPONSE]\n${r3}\n\nPlease further attack the PRO side's weaknesses.`
     );
     rounds.push({ round: 4, role: 'con', model: seats.con, content: r4 });
 
@@ -75,7 +70,7 @@ async function runSession(sessionIndex, proposal, onProgress) {
     notify({ type: 'round', session: sessionIndex + 1, round: 5, role: 'judge', model: seats.judge });
     const r5 = await getLLM(seats.judge).chat(
       judgePrompt,
-      `以下是一場完整辯論的記錄，請做出裁決：\n\n【提案】\n${proposal}\n\n【正方第一輪】\n${r1}\n\n【反方第一輪】\n${r2}\n\n【正方第二輪】\n${r3}\n\n【反方第二輪】\n${r4}\n\n請根據評分維度給出裁決。`
+      `Here is the complete debate transcript. Please deliver your verdict:\n\n[PROPOSAL]\n${proposal}\n\n[PRO ROUND 1]\n${r1}\n\n[CON ROUND 1]\n${r2}\n\n[PRO ROUND 2]\n${r3}\n\n[CON ROUND 2]\n${r4}\n\nPlease score according to the evaluation dimensions and deliver your verdict.`
     );
     rounds.push({ round: 5, role: 'judge', model: seats.judge, content: r5 });
 
@@ -101,21 +96,20 @@ async function runSession(sessionIndex, proposal, onProgress) {
   }
 }
 
-// Extract assumptions using Claude Sonnet
+// Extract assumptions using Claude
 async function extractAssumptions(verdicts, proposal) {
   const claude = getLLM('claude');
   const verdictsText = verdicts
     .filter(v => v)
-    .map((v, i) => `【第 ${i + 1} 場裁決】\n${v}`)
+    .map((v, i) => `[Session ${i + 1} Verdict]\n${v}`)
     .join('\n\n');
 
   const response = await claude.chat(
-    '你是一個商業分析專家。你的工作是從辯論裁決中提取核心假設。',
-    `以下是三場辯論的裁決結果：\n\n${verdictsText}\n\n原始提案：\n${proposal}\n\n請從這些裁決中拆出 8-12 個此提案存活必須成立的核心假設（Critical Assumptions）。每個假設用一句話描述。\n\n請用以下 JSON 格式回覆（只回覆 JSON，不要其他文字）：\n{"assumptions": ["假設1", "假設2", ...]}`
+    'You are a business analysis expert. Your job is to extract critical assumptions from debate verdicts.',
+    `Here are the verdicts from three debate sessions:\n\n${verdictsText}\n\nOriginal proposal:\n${proposal}\n\nPlease extract 8-12 critical assumptions that must hold true for this proposal to survive. Describe each assumption in one sentence.\n\nRespond in the following JSON format (JSON only, no other text):\n{"assumptions": ["Assumption 1", "Assumption 2", ...]}`
   );
 
   try {
-    // Try to parse JSON from response
     const jsonMatch = response.match(/\{[\s\S]*"assumptions"[\s\S]*\}/);
     if (jsonMatch) {
       const parsed = JSON.parse(jsonMatch[0]);
